@@ -31,6 +31,11 @@
 #include <linux/syscore_ops.h>
 
 #include <trace/events/power.h>
+// WJH based on KTOONSEZ code!
+extern ssize_t show_UV_mV_table(struct cpufreq_policy *policy, char *buf);
+extern ssize_t show_UV_mV_table_stock(struct cpufreq_policy *policy, char *buf);
+extern ssize_t store_UV_mV_table(struct cpufreq_policy *policy,const char *buf, size_t count);
+// WJH based on KTOONSEZ code!
 
 /**
  * The "cpufreq driver" - the arch- or hardware-dependent low
@@ -665,6 +670,8 @@ cpufreq_freq_attr_rw(scaling_min_freq);
 cpufreq_freq_attr_rw(scaling_max_freq);
 cpufreq_freq_attr_rw(scaling_governor);
 cpufreq_freq_attr_rw(scaling_setspeed);
+cpufreq_freq_attr_rw(UV_mV_table); // WJH based on 
+cpufreq_freq_attr_ro(UV_mV_table_stock); // KTOONSEZ code!
 
 static struct attribute *default_attrs[] = {
 	&cpuinfo_min_freq.attr,
@@ -682,6 +689,8 @@ static struct attribute *default_attrs[] = {
 	&scaling_driver.attr,
 	&scaling_available_governors.attr,
 	&scaling_setspeed.attr,
+	&UV_mV_table.attr, // WJH based on
+	&UV_mV_table_stock.attr, // KTOONSEZ code!
 	NULL
 };
 

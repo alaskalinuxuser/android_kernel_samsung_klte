@@ -21,8 +21,12 @@
 #include <linux/cpumask.h>
 #include <asm/div64.h>
 #include <asm/cputime.h>
-
-#define CPUFREQ_NAME_LEN 16
+// WJH based on KTOONSEZ code!
+#define CPU_VDD_MIN	 500
+#define CPU_VDD_MAX	1300
+#define FREQ_STEPS	333
+#define CPUFREQ_NAME_LEN 17
+// WJH based on KTOONSEZ code #define CPUFREQ_NAME_LEN 16
 
 
 /*********************************************************************
