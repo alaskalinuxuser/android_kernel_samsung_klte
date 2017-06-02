@@ -2,6 +2,11 @@
 AKLU "N" Kernel for Samsung Galaxy S5. https://thealaskalinuxuser.wordpress.com
 
 Change Log:
+20170602
++ Overclocked the GPU to 600 Mhz
+  - A 4% gain without increasing voltage!
+
+20170530
 + Added KTOONSEZ Voltage control!
   - Can be controlled from Kernel Adiutor or other apps. WARNING! THIS IS DANGEROUS!
 
