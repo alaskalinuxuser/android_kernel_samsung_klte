@@ -8975,6 +8975,120 @@ static const struct file_operations codec_mbhc_debug_ops = {
 	.open = codec_debug_open,
 	.read = codec_mbhc_debug_read,
 };
+
+static unsigned char read_data;
+static ssize_t peek_reg_read_file(struct file *file, char __user *ubuf,
+				size_t count, loff_t *ppos)
+{
+	char lbuf[8];
+
+	snprintf(lbuf, sizeof(lbuf), "0x%x\n", read_data);
+	return simple_read_from_buffer(ubuf, count, ppos, lbuf, strlen(lbuf));
+}
+
+static int get_parameters(char *buf, long int *param1, int num_of_par)
+{
+	char *token;
+	int base, cnt;
+
+	token = strsep(&buf, " ");
+
+	for (cnt = 0; cnt < num_of_par; cnt++) {
+		if (token != NULL) {
+			if ((token[1] == 'x') || (token[1] == 'X'))
+				base = 16;
+			else
+				base = 10;
+
+			if (strict_strtoul(token, base, &param1[cnt]) != 0)
+				return -EINVAL;
+
+			token = strsep(&buf, " ");
+			}
+		else
+			return -EINVAL;
+	}
+	return 0;
+}
+
+static ssize_t poke_reg_write_file(struct file *filp,
+        const char __user *ubuf, size_t cnt, loff_t *ppos)
+{
+    struct snd_soc_codec *codec = filp->private_data;
+    char lbuf[32];
+    int rc;
+    long int param[5];
+
+    if (cnt > sizeof(lbuf) - 1)
+            return -EINVAL;
+
+    rc = copy_from_user(lbuf, ubuf, cnt);
+    if (rc)
+            return -EFAULT;
+
+    lbuf[cnt] = '\0';
+   /* write */
+   rc = get_parameters(lbuf, param, 2);
+   if ((param[0] <= TABLA_MAX_REGISTER) && (param[1] <= TABLA_MAX_REGISTER) &&
+           (rc == 0))
+           wcd9xxx_reg_write(codec->control_data, param[0], param[1]);
+   else
+           rc = -EINVAL;
+    if (rc == 0)
+            rc = cnt;
+    else
+            pr_err("%s: rc = %d\n", __func__, rc);
+
+    return rc;
+}
+
+static ssize_t peek_reg_write_file(struct file *filp,
+	const char __user *ubuf, size_t cnt, loff_t *ppos)
+{
+	struct snd_soc_codec *codec = filp->private_data;
+	char lbuf[32];
+	int rc;
+	long int param[5];
+
+	if (cnt > sizeof(lbuf) - 1)
+		return -EINVAL;
+
+	rc = copy_from_user(lbuf, ubuf, cnt);
+	if (rc)
+		return -EFAULT;
+
+	lbuf[cnt] = '\0';
+	/* read */
+	rc = get_parameters(lbuf, param, 1);
+	if ((param[0] <= TABLA_MAX_REGISTER) && (rc == 0))
+		read_data = wcd9xxx_reg_read(codec->control_data, param[0]);
+	else
+		rc = -EINVAL;
+
+	if (rc == 0)
+		rc = cnt;
+	else
+		pr_err("%s: rc = %d\n", __func__, rc);
+
+	return rc;
+}
+
+static const struct file_operations peek_reg_fops = {
+	.open = codec_debug_open,
+	.read = peek_reg_read_file,
+	.write = peek_reg_write_file,
+};
+
+static const struct file_operations poke_reg_fops = {
+	.open = codec_debug_open,
+	.write = poke_reg_write_file,
+};
+#endif
+
+#ifdef CONFIG_SOUND_CONTROL_HAX_GPL
+struct snd_kcontrol_new *gpl_faux_snd_controls_ptr =
+		(struct snd_kcontrol_new *)tabla_snd_controls;
+//WJH
 #endif
 
 static int tabla_codec_probe(struct snd_soc_codec *codec)

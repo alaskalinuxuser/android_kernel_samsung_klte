@@ -4923,7 +4923,13 @@ config SEC_SMART_MGR_RUNQUEUE_AVG
 	help
 	  Support for Smart MGR function.
 endif
-
+config FORCE_FAST_CHARGE
+ 	bool "Force fast charging (AC/USB) by Yank555.lu"
+ 	default y
+ 	help
+ 	  A simple sysfs interface to force adapters that
+ 	  are detected as USB to charge as AC (1A/h) or to set
+ 	  custom charging currents for AC and USB. WJH
 config KERNEL_TEXT_MPU_PROT
         bool "Enable xpu protection of kernel r/o sections"
         help
