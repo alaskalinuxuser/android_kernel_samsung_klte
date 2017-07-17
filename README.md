@@ -2,6 +2,9 @@
 AKLU "N" Kernel for Samsung Galaxy S5. https://thealaskalinuxuser.wordpress.com
 
 Change Log:
+20170717
++ Added savoca's KCal v2
+
 20170621
 + Added Fast Charge!
 + Added simple Sound Control from the SmartPack kernel!
